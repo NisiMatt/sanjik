@@ -174,22 +174,11 @@
       outline: none;
     }
 
-    .section-rail {
-      position: fixed;
-      top: 92px;
-      left: 14px;
-      z-index: 12;
-      width: 138px;
-      display: grid;
-      gap: 8px;
-      filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.34));
-    }
-
     .rail-link {
-      min-height: 38px;
+      min-height: 40px;
       display: flex;
       align-items: center;
-      padding: 9px 12px;
+      padding: 9px 14px;
       border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, 0.14);
       color: var(--muted);
@@ -210,7 +199,7 @@
       background:
         linear-gradient(145deg, rgba(201, 255, 61, 0.18), rgba(112, 229, 214, 0.12)),
         rgba(7, 20, 45, 0.9);
-      transform: translateX(4px);
+      transform: translateY(-2px);
       outline: none;
     }
 
@@ -1018,12 +1007,6 @@
         font-size: 0.88rem;
       }
 
-      .section-rail {
-        left: 8px;
-        top: 104px;
-        width: 112px;
-      }
-
       .rail-link {
         min-height: 34px;
         padding: 7px 9px;
@@ -1119,14 +1102,6 @@
   </style>
 </head>
 <body>
-  <nav class="section-rail" aria-label="Быстрые переходы по сайту">
-    <a class="rail-link is-active" href="#top" data-section="top">Главная</a>
-    <a class="rail-link" href="#history" data-section="history">Легенда клуба</a>
-    <a class="rail-link" href="#kits" data-section="kits">Формы</a>
-    <a class="rail-link" href="#style" data-section="style">Стиль игры</a>
-    <a class="rail-link" href="#game" data-section="game">Игра</a>
-  </nav>
-
   <header class="topbar">
     <nav class="nav" aria-label="Главная навигация">
       <a class="brand" href="#top" aria-label="FC SANJIK">
@@ -1134,9 +1109,11 @@
         <span>FC SANJIK</span>
       </a>
       <div class="nav-links">
-        <a href="#history">История</a>
-        <a href="#kits">Формы</a>
-        <a href="#game">Игра</a>
+        <a class="rail-link is-active" href="#top" data-section="top">Главная</a>
+        <a class="rail-link" href="#history" data-section="history">Легенда клуба</a>
+        <a class="rail-link" href="#kits" data-section="kits">Формы</a>
+        <a class="rail-link" href="#style" data-section="style">Стиль игры</a>
+        <a class="rail-link" href="#game" data-section="game">Игра</a>
       </div>
     </nav>
   </header>
