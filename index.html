@@ -160,6 +160,10 @@
       justify-content: flex-end;
     }
 
+    .nav-links::-webkit-scrollbar {
+      display: none;
+    }
+
     .nav-links a {
       padding: 10px 12px;
       border-radius: 999px;
@@ -577,8 +581,9 @@
 
     .player-dialog {
       width: min(560px, 100%);
+      max-height: calc(100svh - 40px);
+      overflow: auto;
       border-radius: 8px;
-      overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.2);
       background: #0e2348;
       box-shadow: 0 30px 90px rgba(0, 0, 0, 0.48);
@@ -992,29 +997,48 @@
 
     @media (max-width: 680px) {
       .nav {
+        width: min(100% - 20px, 1160px);
         min-height: auto;
-        padding: 12px 0;
+        padding: 10px 0;
         align-items: flex-start;
         flex-direction: column;
+        gap: 10px;
+      }
+
+      .brand {
+        gap: 9px;
+        font-size: 0.92rem;
+      }
+
+      .brand img {
+        width: 34px;
+        height: 34px;
       }
 
       .nav-links {
+        width: 100%;
         justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none;
       }
 
       .nav-links a {
+        flex: 0 0 auto;
         padding: 8px 10px;
-        font-size: 0.88rem;
+        font-size: 0.78rem;
       }
 
       .rail-link {
         min-height: 34px;
         padding: 7px 9px;
         font-size: 0.72rem;
+        white-space: nowrap;
       }
 
       .hero {
-        min-height: 86svh;
+        min-height: 78svh;
       }
 
       .hero::before {
@@ -1024,60 +1048,74 @@
       }
 
       .hero-content {
-        padding: 240px 0 64px;
+        width: min(100% - 24px, 1160px);
+        padding: 132px 0 54px;
       }
 
       .hero-club-collage {
-        top: 116px;
-        left: 16px;
-        right: 16px;
-        width: auto;
-        height: 210px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-template-rows: 1fr;
-        gap: 8px;
-        opacity: 0.76;
-        transform: none;
-      }
-
-      .club-frame.main {
-        grid-row: auto;
-      }
-
-      .club-frame.logo-frame {
         display: none;
       }
 
-      .club-frame span {
-        font-size: 0.72rem;
-        left: 8px;
-        right: 8px;
-        bottom: 8px;
-        padding: 6px 8px;
-      }
-
       h1 {
-        font-size: 2.75rem;
+        font-size: 2.45rem;
       }
 
       h2 {
-        font-size: 2rem;
+        font-size: 1.76rem;
       }
 
       .section {
-        padding: 62px 0;
+        width: min(100% - 24px, 1160px);
+        padding: 54px 0;
+      }
+
+      .section-title {
+        gap: 14px;
+      }
+
+      .hero-copy,
+      .section-title p,
+      .story p,
+      .character p,
+      .moment p {
+        font-size: 0.98rem;
+        line-height: 1.62;
+      }
+
+      .hero-actions,
+      .game-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .crest-panel {
+        width: min(220px, 100%);
       }
 
       .story,
       .game-board {
-        padding: 20px;
+        padding: 18px;
+      }
+
+      .identity-item {
+        padding: 16px;
       }
 
       .players-list,
       .kits,
       .kit-media.three,
+      .kit-media,
       .player-dialog-stats {
         grid-template-columns: 1fr;
+      }
+
+      .kit-shot img,
+      .player-photo {
+        aspect-ratio: 4 / 4.7;
       }
 
       .game-visual {
@@ -1086,6 +1124,53 @@
 
       .tactic-board svg {
         min-height: 310px;
+      }
+
+      .scoreline {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .meter {
+        width: 100%;
+      }
+
+      .moment {
+        min-height: auto;
+      }
+
+      .moment h3 {
+        font-size: 1.28rem;
+      }
+
+      .choice {
+        min-height: 50px;
+        padding: 12px 13px;
+      }
+
+      .player-modal {
+        padding: 12px;
+      }
+
+      .player-dialog {
+        max-height: calc(100svh - 24px);
+      }
+
+      .player-dialog img {
+        max-height: 250px;
+      }
+
+      .player-dialog-body {
+        padding: 16px;
+      }
+
+      .player-dialog h3 {
+        font-size: 1.42rem;
+      }
+
+      .footer-inner {
+        align-items: stretch;
+        flex-direction: column;
       }
     }
 
