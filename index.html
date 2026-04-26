@@ -1149,23 +1149,76 @@
       }
 
       .player-modal {
+        align-items: end;
+        place-items: end center;
         padding: 12px;
+        background: rgba(3, 8, 18, 0.48);
+        backdrop-filter: blur(7px);
       }
 
       .player-dialog {
-        max-height: calc(100svh - 24px);
+        width: min(100%, 390px);
+        max-height: min(72svh, 560px);
+        border-radius: 8px 8px 0 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        overflow: hidden;
       }
 
       .player-dialog img {
-        max-height: 250px;
+        height: 150px;
+        max-height: 150px;
+        object-position: center 18%;
       }
 
       .player-dialog-body {
-        padding: 16px;
+        min-height: 0;
+        padding: 14px;
+        display: grid;
+        grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+        overflow: auto;
       }
 
       .player-dialog h3 {
-        font-size: 1.42rem;
+        margin-bottom: 8px;
+        font-size: 1.28rem;
+      }
+
+      .player-dialog-kicker {
+        font-size: 0.72rem;
+      }
+
+      .player-dialog p {
+        max-height: 120px;
+        overflow: auto;
+        margin-bottom: 12px;
+        font-size: 0.92rem;
+        line-height: 1.5;
+      }
+
+      .player-dialog-stats {
+        gap: 7px;
+        margin-bottom: 12px;
+      }
+
+      .player-dialog-stats span {
+        padding: 8px;
+        font-size: 0.78rem;
+      }
+
+      .player-dialog-stats strong {
+        font-size: 0.88rem;
+      }
+
+      .player-dialog-actions {
+        position: sticky;
+        bottom: 0;
+        padding-top: 8px;
+        background: linear-gradient(180deg, rgba(14, 35, 72, 0), #0e2348 28%);
+      }
+
+      .player-dialog-actions .btn {
+        min-height: 42px;
       }
 
       .footer-inner {
