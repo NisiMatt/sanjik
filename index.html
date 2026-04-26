@@ -1,0 +1,1814 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FC SANJIK</title>
+  <style>
+    :root {
+      --ink: #f8fbff;
+      --muted: #b8c3d8;
+      --night: #07142d;
+      --deep: #0c1f43;
+      --line: rgba(255, 255, 255, 0.16);
+      --lime: #c9ff3d;
+      --aqua: #70e5d6;
+      --purple: #8a45d9;
+      --burgundy: #9f1f38;
+      --orange: #ffb12f;
+      --panel: rgba(9, 22, 48, 0.86);
+      --panel-solid: #0e2348;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+      color-scheme: dark;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    @keyframes softReveal {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(112, 229, 214, 0.14), transparent 34rem),
+        radial-gradient(circle at 85% 28%, rgba(138, 69, 217, 0.18), transparent 30rem),
+        linear-gradient(145deg, #040915 0%, var(--night) 42%, #08162f 100%);
+      min-height: 100vh;
+      letter-spacing: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.32;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 78%);
+      z-index: -1;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .crest-panel,
+    .kit-card,
+    .player-card,
+    .game-visual,
+    .tactic-board {
+      animation: softReveal 700ms ease both;
+    }
+
+    .kit-card,
+    .player-card,
+    .crest-panel {
+      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+    }
+
+    .kit-card:hover,
+    .player-card:hover,
+    .crest-panel:hover {
+      transform: translateY(-6px);
+      border-color: rgba(201, 255, 61, 0.42);
+      box-shadow: 0 24px 58px rgba(0, 0, 0, 0.34);
+    }
+
+    .kit-shot img,
+    .player-photo,
+    .crest-panel img {
+      transition: transform 420ms ease, filter 420ms ease;
+    }
+
+    .kit-card:hover .kit-shot img,
+    .player-card:hover .player-photo,
+    .crest-panel:hover img {
+      transform: scale(1.045);
+      filter: saturate(1.08) contrast(1.04);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(5, 13, 29, 0.78);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      font-size: 1rem;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 0 0 4px rgba(255, 177, 47, 0.12);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      padding: 10px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.08);
+      outline: none;
+    }
+
+    .section-rail {
+      position: fixed;
+      top: 92px;
+      left: 14px;
+      z-index: 12;
+      width: 138px;
+      display: grid;
+      gap: 8px;
+      filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.34));
+    }
+
+    .rail-link {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--muted);
+      background:
+        linear-gradient(145deg, rgba(7, 20, 45, 0.9), rgba(14, 35, 72, 0.82));
+      backdrop-filter: blur(14px);
+      font-size: 0.82rem;
+      font-weight: 900;
+      line-height: 1.1;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .rail-link:hover,
+    .rail-link:focus-visible,
+    .rail-link.is-active {
+      color: var(--ink);
+      border-color: rgba(201, 255, 61, 0.45);
+      background:
+        linear-gradient(145deg, rgba(201, 255, 61, 0.18), rgba(112, 229, 214, 0.12)),
+        rgba(7, 20, 45, 0.9);
+      transform: translateX(4px);
+      outline: none;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 88svh;
+      display: grid;
+      align-items: end;
+      overflow: clip;
+      isolation: isolate;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(4, 9, 21, 0.86) 0%, rgba(4, 9, 21, 0.58) 46%, rgba(4, 9, 21, 0.18) 100%),
+        linear-gradient(0deg, rgba(4, 9, 21, 0.94) 0%, rgba(4, 9, 21, 0.2) 48%, rgba(4, 9, 21, 0.1) 100%),
+        url("assets/hero-stadium.jpg") center / cover no-repeat;
+      z-index: -2;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 16px;
+      background: linear-gradient(90deg, var(--lime), var(--aqua), var(--burgundy), var(--purple), var(--orange));
+      z-index: -1;
+    }
+
+    .hero-content {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 72px 0 88px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 48px;
+      align-items: end;
+    }
+
+    .hero-club-collage {
+      position: absolute;
+      right: max(24px, calc((100vw - 1160px) / 2));
+      top: 112px;
+      z-index: -1;
+      width: min(560px, 46vw);
+      height: min(660px, 72vh);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-rows: 1fr 0.9fr;
+      gap: 14px;
+      transform: rotate(-1.5deg);
+      pointer-events: none;
+    }
+
+    .club-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #0b1833;
+      box-shadow: 0 24px 62px rgba(0, 0, 0, 0.42);
+    }
+
+    .club-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: saturate(1.05) contrast(1.04);
+    }
+
+    .club-frame.main {
+      grid-row: span 2;
+    }
+
+    .club-frame.logo-frame {
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 177, 47, 0.22), transparent 44%),
+        linear-gradient(145deg, rgba(7, 20, 45, 0.96), rgba(17, 44, 87, 0.84));
+    }
+
+    .club-frame.logo-frame img {
+      width: min(180px, 76%);
+      height: auto;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      box-shadow: 0 0 0 8px rgba(255, 177, 47, 0.1), 0 18px 42px rgba(0, 0, 0, 0.36);
+    }
+
+    .club-frame span {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--ink);
+      background: rgba(5, 13, 29, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      color: #06111f;
+      background: var(--lime);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 900;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin-bottom: 18px;
+      font-size: 5rem;
+      line-height: 0.9;
+      font-weight: 950;
+      text-transform: uppercase;
+      text-wrap: balance;
+    }
+
+    .hero-copy {
+      max-width: 650px;
+      margin-bottom: 26px;
+      color: #dbe6f7;
+      font-size: 1.16rem;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.36);
+      background: rgba(255, 255, 255, 0.14);
+      outline: none;
+    }
+
+    .btn.primary {
+      color: #06111f;
+      background: var(--lime);
+      border-color: transparent;
+      font-weight: 900;
+    }
+
+    .crest-panel {
+      justify-self: end;
+      width: min(100%, 320px);
+      background: rgba(7, 20, 45, 0.72);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .crest-panel img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .crest-panel p {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    main {
+      overflow: hidden;
+    }
+
+    .section {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 84px 0;
+    }
+
+    .section-title {
+      display: grid;
+      grid-template-columns: minmax(0, 0.82fr) minmax(260px, 0.45fr);
+      gap: 32px;
+      align-items: end;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-bottom: 0;
+      font-size: 2.5rem;
+      line-height: 1.08;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .section-title p,
+    .lead {
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.65fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .story {
+      padding: 30px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .story p {
+      color: #d8e4f6;
+      line-height: 1.75;
+      margin-bottom: 18px;
+    }
+
+    .story p:last-child {
+      margin-bottom: 0;
+    }
+
+    .identity {
+      display: grid;
+      gap: 14px;
+    }
+
+    .identity-item {
+      padding: 20px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--line);
+    }
+
+    .identity-item strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.02rem;
+    }
+
+    .identity-item span {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .players-title {
+      margin: 34px 0 8px;
+      font-size: 1.35rem;
+      line-height: 1.2;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .players-hint {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .players-list {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .player-card {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #fff;
+      background: linear-gradient(145deg, rgba(201, 255, 61, 0.16), rgba(112, 229, 214, 0.1) 45%, rgba(138, 69, 217, 0.18));
+      cursor: pointer;
+    }
+
+    .player-card:focus-visible {
+      outline: 3px solid var(--lime);
+      outline-offset: 4px;
+    }
+
+    .player-photo {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: center top;
+      background: #111d35;
+    }
+
+    .player-info {
+      padding: 12px;
+    }
+
+    .player-info span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .player-info strong {
+      display: block;
+      font-size: 1.08rem;
+      font-weight: 950;
+    }
+
+    .player-info em {
+      display: block;
+      margin-top: 8px;
+      color: var(--lime);
+      font-size: 0.78rem;
+      font-style: normal;
+      font-weight: 900;
+    }
+
+    .player-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(3, 8, 18, 0.74);
+      backdrop-filter: blur(12px);
+    }
+
+    .player-modal[hidden] {
+      display: none;
+    }
+
+    .player-dialog {
+      width: min(560px, 100%);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #0e2348;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.48);
+      animation: softReveal 260ms ease both;
+    }
+
+    .player-dialog img {
+      width: 100%;
+      max-height: 340px;
+      object-fit: cover;
+      object-position: center top;
+      background: #111d35;
+    }
+
+    .player-dialog-body {
+      padding: 22px;
+    }
+
+    .player-dialog-kicker {
+      color: var(--lime);
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .player-dialog h3 {
+      margin-bottom: 10px;
+      font-size: 1.8rem;
+    }
+
+    .player-dialog p {
+      color: #dce8f8;
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .player-dialog-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .player-dialog-stats span {
+      display: block;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .player-dialog-stats strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .player-dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .kits {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .kit-card {
+      min-width: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
+    }
+
+    .kit-media {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .kit-media.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .kit-shot {
+      position: relative;
+      min-width: 0;
+      background: #111d35;
+    }
+
+    .kit-shot img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      background: #111d35;
+    }
+
+    .kit-shot span {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      max-width: calc(100% - 20px);
+      padding: 6px 9px;
+      border-radius: 8px;
+      color: #f8fbff;
+      background: rgba(5, 13, 29, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .kit-card .kit-body {
+      padding: 16px;
+    }
+
+    .kit-card h3 {
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    .kit-card p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .feature-band {
+      background:
+        linear-gradient(90deg, rgba(7, 20, 45, 0.97), rgba(7, 20, 45, 0.7)),
+        radial-gradient(circle at 82% 30%, rgba(201, 255, 61, 0.2), transparent 8rem),
+        radial-gradient(circle at 72% 74%, rgba(138, 69, 217, 0.22), transparent 10rem),
+        linear-gradient(135deg, rgba(112, 229, 214, 0.12), transparent 46%);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .feature-band .section {
+      position: relative;
+    }
+
+    .feature-band .section::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 0;
+      width: min(430px, 42vw);
+      aspect-ratio: 1.35;
+      transform: translateY(-50%);
+      opacity: 0.9;
+      background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 560 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%2308142d'/%3E%3Cstop offset='.55' stop-color='%2312463a'/%3E%3Cstop offset='1' stop-color='%233b166c'/%3E%3C/linearGradient%3E%3Cfilter id='s'%3E%3CfeDropShadow dx='0' dy='12' stdDeviation='10' flood-color='%23000000' flood-opacity='.35'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='560' height='400' rx='22' fill='url(%23g)'/%3E%3Cpath d='M48 335 L512 335 L448 72 L112 72 Z' fill='%23105b3e' stroke='rgba(255,255,255,.42)' stroke-width='4'/%3E%3Cpath d='M112 72 L448 72 M178 335 L216 72 M280 335 L280 72 M382 335 L344 72' stroke='rgba(255,255,255,.18)' stroke-width='3'/%3E%3Crect x='220' y='72' width='120' height='52' fill='none' stroke='rgba(255,255,255,.45)' stroke-width='3'/%3E%3Crect x='246' y='72' width='68' height='24' fill='none' stroke='rgba(255,255,255,.45)' stroke-width='3'/%3E%3Cpath d='M126 286 C182 220 240 184 318 148 C365 126 407 103 463 88' fill='none' stroke='%23c9ff3d' stroke-width='10' stroke-linecap='round' filter='url(%23s)'/%3E%3Cpath d='M132 170 C206 196 257 188 318 148' fill='none' stroke='%2370e5d6' stroke-width='8' stroke-linecap='round' stroke-dasharray='18 13'/%3E%3Cpath d='M210 292 C238 245 268 196 318 148' fill='none' stroke='%238a45d9' stroke-width='8' stroke-linecap='round'/%3E%3Ccircle cx='126' cy='286' r='22' fill='%23c9ff3d' stroke='%2307142d' stroke-width='7'/%3E%3Ccircle cx='132' cy='170' r='20' fill='%23c9ff3d' stroke='%2307142d' stroke-width='7'/%3E%3Ccircle cx='210' cy='292' r='20' fill='%23c9ff3d' stroke='%2307142d' stroke-width='7'/%3E%3Ccircle cx='318' cy='148' r='24' fill='%23c9ff3d' stroke='%2307142d' stroke-width='7'/%3E%3Ccircle cx='463' cy='88' r='14' fill='%23ffb12f' stroke='%2307142d' stroke-width='5'/%3E%3Cpath d='M399 188 l25-24 l25 24 l-25 24 z' fill='%239f1f38' stroke='%2307142d' stroke-width='6'/%3E%3Cpath d='M365 252 l22-22 l22 22 l-22 22 z' fill='%239f1f38' stroke='%2307142d' stroke-width='6'/%3E%3Ctext x='280' y='374' text-anchor='middle' fill='white' font-family='Arial,sans-serif' font-size='24' font-weight='900'%3EPRESSING • PASS • FINISH%3C/text%3E%3C/svg%3E") center / contain no-repeat;
+      filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.34));
+      pointer-events: none;
+    }
+
+    .character {
+      max-width: 760px;
+      padding: 84px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .character h2 {
+      margin-bottom: 18px;
+    }
+
+    .character p {
+      color: #dce8f8;
+      font-size: 1.08rem;
+      line-height: 1.75;
+    }
+
+    .game-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 0.72fr) minmax(320px, 0.55fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .game-board {
+      border-radius: 8px;
+      padding: 28px;
+      background: var(--panel-solid);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .scoreline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .meter {
+      flex: 1;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .meter span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--lime), var(--aqua), var(--orange));
+      transition: width 240ms ease;
+    }
+
+    .moment {
+      min-height: 112px;
+      margin-bottom: 22px;
+    }
+
+    .moment h3 {
+      margin-bottom: 10px;
+      font-size: 1.55rem;
+    }
+
+    .moment p {
+      margin-bottom: 0;
+      color: #d9e5f6;
+      line-height: 1.65;
+    }
+
+    .choices {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .choice {
+      width: 100%;
+      min-height: 56px;
+      border: 1px solid rgba(255, 255, 255, 0.17);
+      border-radius: 8px;
+      padding: 14px 16px;
+      text-align: left;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.07);
+      cursor: pointer;
+    }
+
+    .choice:hover,
+    .choice:focus-visible {
+      border-color: var(--aqua);
+      outline: none;
+    }
+
+    .choice[disabled] {
+      cursor: default;
+      opacity: 0.68;
+    }
+
+    .choice.selected {
+      border-color: var(--lime);
+      background: rgba(201, 255, 61, 0.14);
+      opacity: 1;
+    }
+
+    .result {
+      min-height: 72px;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.06);
+      color: #dce8f8;
+      line-height: 1.55;
+    }
+
+    .game-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .game-visual {
+      position: relative;
+      min-height: 520px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(18, 52, 92, 0.92), rgba(7, 20, 45, 0.96)),
+        #07142d;
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 14px;
+    }
+
+    .diagram-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .diagram-head strong {
+      color: var(--lime);
+      text-transform: uppercase;
+      font-size: 0.86rem;
+    }
+
+    .tactic-board {
+      min-height: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: #113e30;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .tactic-board svg {
+      width: 100%;
+      height: 100%;
+      min-height: 390px;
+      display: block;
+    }
+
+    .diagram-caption {
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: rgba(5, 13, 29, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #d9e5f6;
+      line-height: 1.5;
+    }
+
+    footer {
+      padding: 34px 0 44px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .max-link {
+      color: #06111f;
+      background: var(--lime);
+      border-color: transparent;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 980px) {
+      .hero-content,
+      .section-title,
+      .story-grid,
+      .game-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-content {
+        gap: 28px;
+      }
+
+      .hero-club-collage {
+        right: 18px;
+        top: 100px;
+        width: min(430px, 52vw);
+        height: 520px;
+        opacity: 0.72;
+      }
+
+      .crest-panel {
+        justify-self: start;
+        width: 240px;
+      }
+
+      h1 {
+        font-size: 3.7rem;
+      }
+
+      .game-visual {
+        min-height: 420px;
+      }
+
+      .feature-band .section::after {
+        width: min(360px, 78vw);
+        top: auto;
+        right: 0;
+        bottom: 18px;
+        transform: none;
+        opacity: 0.26;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .nav {
+        min-height: auto;
+        padding: 12px 0;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+      }
+
+      .nav-links a {
+        padding: 8px 10px;
+        font-size: 0.88rem;
+      }
+
+      .section-rail {
+        left: 8px;
+        top: 104px;
+        width: 112px;
+      }
+
+      .rail-link {
+        min-height: 34px;
+        padding: 7px 9px;
+        font-size: 0.72rem;
+      }
+
+      .hero {
+        min-height: 86svh;
+      }
+
+      .hero::before {
+        background:
+          linear-gradient(0deg, rgba(4, 9, 21, 0.95) 0%, rgba(4, 9, 21, 0.48) 58%, rgba(4, 9, 21, 0.25) 100%),
+          url("assets/hero-stadium.jpg") center top / cover no-repeat;
+      }
+
+      .hero-content {
+        padding: 240px 0 64px;
+      }
+
+      .hero-club-collage {
+        top: 116px;
+        left: 16px;
+        right: 16px;
+        width: auto;
+        height: 210px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: 1fr;
+        gap: 8px;
+        opacity: 0.76;
+        transform: none;
+      }
+
+      .club-frame.main {
+        grid-row: auto;
+      }
+
+      .club-frame.logo-frame {
+        display: none;
+      }
+
+      .club-frame span {
+        font-size: 0.72rem;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        padding: 6px 8px;
+      }
+
+      h1 {
+        font-size: 2.75rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      .section {
+        padding: 62px 0;
+      }
+
+      .story,
+      .game-board {
+        padding: 20px;
+      }
+
+      .players-list,
+      .kits,
+      .kit-media.three,
+      .player-dialog-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .game-visual {
+        min-height: 360px;
+      }
+
+      .tactic-board svg {
+        min-height: 310px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="section-rail" aria-label="Быстрые переходы по сайту">
+    <a class="rail-link is-active" href="#top" data-section="top">Главная</a>
+    <a class="rail-link" href="#history" data-section="history">Легенда клуба</a>
+    <a class="rail-link" href="#kits" data-section="kits">Формы</a>
+    <a class="rail-link" href="#style" data-section="style">Стиль игры</a>
+    <a class="rail-link" href="#game" data-section="game">Игра</a>
+  </nav>
+
+  <header class="topbar">
+    <nav class="nav" aria-label="Главная навигация">
+      <a class="brand" href="#top" aria-label="FC SANJIK">
+        <img src="assets/logo.jpg" alt="Эмблема FC SANJIK">
+        <span>FC SANJIK</span>
+      </a>
+      <div class="nav-links">
+        <a href="#history">История</a>
+        <a href="#kits">Формы</a>
+        <a href="#game">Игра</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-label="FC SANJIK">
+      <div class="hero-content">
+        <div>
+          <span class="eyebrow">Футбольная команда</span>
+          <h1>FC SANJIK</h1>
+          <p class="hero-copy">
+            Команда с яркой эмблемой, смелыми комплектами формы и стилем, который строится на скорости,
+            характере и вере в последний рывок.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#game">Играть в интуицию</a>
+            <a class="btn" href="#kits">Смотреть формы</a>
+          </div>
+        </div>
+
+        <aside class="crest-panel" aria-label="Эмблема команды">
+          <img src="assets/logo.jpg" alt="Крупная эмблема FC SANJIK">
+          <p>Золотой мяч в темном круге стал знаком команды: энергия атаки, собранность защиты и спокойствие в решающий момент.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="history">
+      <div class="section-title">
+        <h2>Легенда клуба</h2>
+        <p>Художественная история FC SANJIK, созданная по настроению эмблемы и формы команды.</p>
+      </div>
+
+      <div class="story-grid">
+        <article class="story">
+          <p>
+            FC SANJIK появился как команда, которая не ждала идеального поля или громких трибун.
+            Ее сила родилась в простом футбольном правиле: если мяч еще в игре, шанс все еще жив.
+          </p>
+          <p>
+            Первые матчи команды описывают как быстрые и нервные: соперник давил, время таяло,
+            но SANJIK отвечал рывком по флангу, точным пасом и ударом без лишнего страха.
+          </p>
+          <p>
+            Теперь FC SANJIK выходит на уровень больших турниров: команда играет в испанской Ла Лиге
+            и готовит свои самые громкие вечера для матчей Лиги чемпионов.
+          </p>
+        </article>
+
+        <div class="identity">
+          <div class="identity-item">
+            <strong>Характер</strong>
+            <span>Играть смело, думать быстро, не выключаться до финального свистка.</span>
+          </div>
+          <div class="identity-item">
+            <strong>Символ</strong>
+            <span>Эмблема с золотым мячом: атака, техника и круг команды, где каждый важен.</span>
+          </div>
+          <div class="identity-item">
+            <strong>Турниры</strong>
+            <span>FC SANJIK играет в испанской Ла Лиге и выходит на матчи Лиги чемпионов.</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="players-title">НАШИ ЛУЧШИЕ ИГРОКИ</h3>
+      <p class="players-hint">Нажми на игрока, чтобы узнать о нем больше.</p>
+      <div class="players-list" aria-label="Лучшие игроки FC SANJIK">
+        <div class="player-card" role="button" tabindex="0" data-player="golovin" aria-label="Открыть биографию GOLOVIN 25">
+          <img class="player-photo" src="assets/player-golovin-real.jpg" alt="GOLOVIN 25 в домашней форме FC SANJIK">
+          <div class="player-info"><span>Полузащитник</span><strong>GOLOVIN 25</strong><em>Нажми, чтобы узнать об игроке</em></div>
+        </div>
+        <div class="player-card" role="button" tabindex="0" data-player="mastantuono" aria-label="Открыть биографию MASTANTUONO 20">
+          <img class="player-photo" src="assets/player-mastantuono-real.jpg" alt="MASTANTUONO 20 в домашней форме FC SANJIK">
+          <div class="player-info"><span>Атакующий игрок</span><strong>MASTANTUONO 20</strong><em>Нажми, чтобы узнать об игроке</em></div>
+        </div>
+        <div class="player-card" role="button" tabindex="0" data-player="yildiz" aria-label="Открыть биографию YILDIZ 26">
+          <img class="player-photo" src="assets/player-yildiz-real.jpg" alt="YILDIZ 26 в домашней форме FC SANJIK">
+          <div class="player-info"><span>Вингер</span><strong>YILDIZ 26</strong><em>Нажми, чтобы узнать об игроке</em></div>
+        </div>
+        <div class="player-card" role="button" tabindex="0" data-player="alvarez" aria-label="Открыть биографию J. ALVAREZ 15">
+          <img class="player-photo" src="assets/player-alvarez-real.jpg" alt="J. ALVAREZ 15 в домашней форме FC SANJIK">
+          <div class="player-info"><span>Нападающий</span><strong>J. ALVAREZ 15</strong><em>Нажми, чтобы узнать об игроке</em></div>
+        </div>
+        <div class="player-card" role="button" tabindex="0" data-player="joao" aria-label="Открыть биографию JOAO PEDRO 9">
+          <img class="player-photo" src="assets/player-joao-pedro-real.jpg" alt="JOAO PEDRO 9 в домашней форме FC SANJIK">
+          <div class="player-info"><span>Форвард</span><strong>JOAO PEDRO 9</strong><em>Нажми, чтобы узнать об игроке</em></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="kits">
+      <div class="section-title">
+        <h2>Коллекция форм</h2>
+        <p>Комплекты FC SANJIK выглядят по-разному, но в каждом остается один и тот же знак команды: яркий мяч на темной эмблеме.</p>
+      </div>
+
+      <div class="kits">
+        <article class="kit-card">
+          <div class="kit-media three">
+            <div class="kit-shot">
+              <img src="assets/black-purple-front.jpg" alt="Черно-фиолетовая домашняя форма FC SANJIK спереди">
+              <span>Перед</span>
+            </div>
+            <div class="kit-shot">
+              <img src="assets/black-purple-back.jpg" alt="Черно-фиолетовая домашняя форма FC SANJIK сзади">
+              <span>Зад</span>
+            </div>
+            <div class="kit-shot">
+              <img src="assets/black-purple-tracksuit.jpg" alt="Черно-фиолетовый домашний костюм FC SANJIK">
+              <span>Костюм</span>
+            </div>
+          </div>
+          <div class="kit-body">
+            <h3>Черно-фиолетовая домашняя</h3>
+            <p>Главный домашний набор FC SANJIK: форма спереди, форма сзади и черно-фиолетовый костюм.</p>
+          </div>
+        </article>
+
+        <article class="kit-card">
+          <div class="kit-media three">
+            <div class="kit-shot">
+              <img src="assets/white-purple-front.jpg" alt="Бело-фиолетовая гостевая форма FC SANJIK спереди">
+              <span>Перед</span>
+            </div>
+            <div class="kit-shot">
+              <img src="assets/white-purple-back.jpg" alt="Бело-фиолетовая гостевая форма FC SANJIK сзади">
+              <span>Зад</span>
+            </div>
+            <div class="kit-shot">
+              <img src="assets/white-purple-tracksuit.jpg" alt="Бело-фиолетовый гостевой костюм FC SANJIK">
+              <span>Костюм</span>
+            </div>
+          </div>
+          <div class="kit-body">
+            <h3>Бело-фиолетовая гостевая</h3>
+            <p>Гостевой набор: форма спереди, форма сзади и костюм в тех же бело-фиолетовых цветах.</p>
+          </div>
+        </article>
+
+        <article class="kit-card">
+          <div class="kit-media three">
+            <div class="kit-shot">
+              <img src="assets/aqua-burgundy-front.jpg" alt="Бирюзово-красная форма FC SANJIK спереди">
+              <span>Перед</span>
+            </div>
+            <div class="kit-shot">
+              <img src="assets/aqua-burgundy-back.jpg" alt="Бирюзово-красная форма FC SANJIK сзади">
+              <span>Зад</span>
+            </div>
+            <div class="kit-shot">
+              <img src="assets/red-aqua-tracksuit.jpg" alt="Бирюзово-красный костюм FC SANJIK">
+              <span>Костюм</span>
+            </div>
+          </div>
+          <div class="kit-body">
+            <h3>Бирюзово-красная форма</h3>
+            <p>Полосатая бирюзово-красная форма и яркий костюм для выхода или разминки.</p>
+          </div>
+        </article>
+
+        <article class="kit-card">
+          <div class="kit-media">
+            <div class="kit-shot">
+              <img src="assets/black-lime-front.jpg" alt="Зелено-черная вратарская форма FC SANJIK спереди">
+              <span>Перед</span>
+            </div>
+            <div class="kit-shot">
+              <img src="assets/black-lime-back.jpg" alt="Зелено-черная вратарская форма FC SANJIK сзади">
+              <span>Зад</span>
+            </div>
+          </div>
+          <div class="kit-body">
+            <h3>Зелено-черная вратарская</h3>
+            <p>Вратарский набор: передняя и задняя часть зелено-черной формы голкипера с номером 1.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="feature-band" id="style" aria-label="Стиль команды">
+      <div class="section">
+        <div class="character">
+          <h2>Стиль FC SANJIK</h2>
+          <p>
+            Эта команда играет на интуиции: почувствовать свободную зону, выбрать момент для паса,
+            решить эпизод до того, как соперник успеет перестроиться. У SANJIK нет случайных цветов:
+            каждый комплект похож на отдельный режим игры.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="game">
+      <div class="section-title">
+        <h2>Интуиция матча</h2>
+        <p>Пять эпизодов, три решения в каждом. Набери максимум очков и получи свое звание в стиле FC SANJIK.</p>
+      </div>
+
+      <div class="game-wrap">
+        <section class="game-board" aria-live="polite">
+          <div class="scoreline">
+            <span id="roundText">Раунд 1 из 5</span>
+            <div class="meter" aria-hidden="true"><span id="meterFill"></span></div>
+            <span id="scoreText">0 очков</span>
+          </div>
+
+          <div class="moment">
+            <h3 id="momentTitle"></h3>
+            <p id="momentText"></p>
+          </div>
+
+          <div class="choices" id="choices"></div>
+          <div class="result" id="result">Выбери решение для первого эпизода.</div>
+
+          <div class="game-actions">
+            <button class="btn primary" id="nextBtn" type="button" disabled>Следующий эпизод</button>
+            <button class="btn" id="restartBtn" type="button">Начать заново</button>
+          </div>
+        </section>
+
+        <aside class="game-visual" aria-label="Тактическая схема эпизода">
+          <div class="diagram-head">
+            <span id="diagramLabel">Контратака 3 в 2</span>
+            <strong>Схема</strong>
+          </div>
+          <div class="tactic-board" id="diagramBoard"></div>
+          <div class="diagram-caption" id="diagramCaption">
+            Зеленые круги - FC SANJIK, бордовые - соперник, оранжевый круг - мяч.
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <strong>FC SANJIK</strong>
+      <span>Художественный сайт команды с формами, эмблемой и мини-игрой.</span>
+      <a class="btn max-link" href="https://max.ru/join/GgnzPPnc2cZg6nezpdDUx1hN2GIM9x1-XHPpilzdazY">НАШ КАНАЛ В MAX</a>
+    </div>
+  </footer>
+
+  <div class="player-modal" id="playerModal" hidden>
+    <div class="player-dialog" role="dialog" aria-modal="true" aria-labelledby="playerModalName">
+      <img id="playerModalImage" src="assets/player-golovin-real.jpg" alt="">
+      <div class="player-dialog-body">
+        <div class="player-dialog-kicker" id="playerModalRole"></div>
+        <h3 id="playerModalName"></h3>
+        <div class="player-dialog-stats">
+          <span>Номер<strong id="playerModalNumber"></strong></span>
+          <span>Роль<strong id="playerModalPosition"></strong></span>
+          <span>Сильная сторона<strong id="playerModalSkill"></strong></span>
+        </div>
+        <p id="playerModalBio"></p>
+        <div class="player-dialog-actions">
+          <button class="btn primary" id="playerModalClose" type="button">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const rounds = [
+      {
+        title: "Контратака три в два",
+        text: "SANJIK перехватил мяч у центра поля. Слева открывается партнер, справа защитник теряет позицию.",
+        options: [
+          { label: "Мгновенно отдать пас влево", points: 2, result: "Идеально. Партнер получает мяч на скорости и выкатывает прострел под удар." },
+          { label: "Пойти в обводку по центру", points: 1, result: "Смело, но рискованно. Ты проходишь одного, однако атака теряет темп." },
+          { label: "Ударить издалека", points: 0, result: "Мяч летит выше. В такой атаке лучше было использовать свободного игрока." }
+        ]
+      },
+      {
+        title: "Пенальти на последней минуте",
+        text: "Счет равный. Вратарь прыгает рано на тренировках, но сейчас пытается стоять до конца.",
+        options: [
+          { label: "Пробить низом в угол после паузы", points: 2, result: "Хладнокровно. Пауза заставляет вратаря раскрыться, мяч уходит в угол." },
+          { label: "Сильно пробить по центру", points: 1, result: "Рабочее решение. Вратарь дернулся, но удар должен быть очень точным." },
+          { label: "Паненка без разбега", points: 0, result: "Красиво только в голове. Вратарь читает замысел и ловит мяч." }
+        ]
+      },
+      {
+        title: "Последний пас",
+        text: "До штрафной два метра. Форвард просит передачу за спину, а полузащитник открывается под короткий пас.",
+        options: [
+          { label: "Отдать тонкий пас за спину", points: 2, result: "Точно в стиль SANJIK. Защитник выключен, форвард выходит один на один." },
+          { label: "Сыграть коротко в центр", points: 1, result: "Команда сохраняет мяч, но момент становится сложнее." },
+          { label: "Развернуться назад", points: 0, result: "Безопасно, но шанс исчезает. Такие эпизоды надо чувствовать быстрее." }
+        ]
+      },
+      {
+        title: "Удар с фланга",
+        text: "Ты на правом краю штрафной. Вратарь прикрывает ближний угол, защитник перекрывает прострел.",
+        options: [
+          { label: "Закрутить в дальний угол", points: 2, result: "Красота. Мяч уходит по дуге туда, где вратарь уже не достает." },
+          { label: "Пробить в ближний угол", points: 1, result: "Удар мощный, но вратарь был готов. Возможен угловой." },
+          { label: "Остановиться и ждать поддержки", points: 0, result: "Соперник успевает накрыть. Момент был именно для быстрого решения." }
+        ]
+      },
+      {
+        title: "Сейв вратаря",
+        text: "Соперник выходит один на один. Нападающий смотрит влево, но корпус повернут к правому углу.",
+        options: [
+          { label: "Дождаться удара и падать вправо", points: 2, result: "Чтение эпизода на высоте. Вратарь забирает мяч и поднимает команду." },
+          { label: "Сразу броситься влево", points: 0, result: "Нападающий обманул взглядом. Мяч уходит в другой угол." },
+          { label: "Сократить угол и остаться на ногах", points: 1, result: "Грамотно. Шанс на сейв есть, но удар все равно остается опасным." }
+        ]
+      }
+    ];
+
+    function fieldSvg(content) {
+      return `
+        <svg viewBox="0 0 520 390" role="img" aria-label="Тактическая схема футбольного эпизода">
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L9,3 z" fill="#c9ff3d"></path>
+            </marker>
+            <marker id="orangeArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L9,3 z" fill="#ffb12f"></path>
+            </marker>
+          </defs>
+          <rect width="520" height="390" fill="#11603f"></rect>
+          <rect x="18" y="18" width="484" height="354" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="3"></rect>
+          <line x1="18" y1="195" x2="502" y2="195" stroke="rgba(255,255,255,.38)" stroke-width="2"></line>
+          <circle cx="260" cy="195" r="48" fill="none" stroke="rgba(255,255,255,.34)" stroke-width="2"></circle>
+          <rect x="172" y="18" width="176" height="68" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="2"></rect>
+          <rect x="212" y="18" width="96" height="30" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="2"></rect>
+          <rect x="172" y="304" width="176" height="68" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="2"></rect>
+          <rect x="212" y="342" width="96" height="30" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="2"></rect>
+          ${content}
+        </svg>
+      `;
+    }
+
+    function player(x, y, color, label) {
+      return `
+        <g>
+          <circle cx="${x}" cy="${y}" r="17" fill="${color}" stroke="#07142d" stroke-width="4"></circle>
+          <text x="${x}" y="${y + 5}" text-anchor="middle" fill="#07142d" font-size="14" font-weight="900">${label}</text>
+        </g>
+      `;
+    }
+
+    function ball(x, y) {
+      return `<circle cx="${x}" cy="${y}" r="8" fill="#ffb12f" stroke="#07142d" stroke-width="3"></circle>`;
+    }
+
+    const diagrams = [
+      {
+        label: "Контратака 3 в 2",
+        caption: "Три зеленых игрока SANJIK бегут против двух защитников. Лучшее решение - пас в свободную левую зону.",
+        svg: fieldSvg(`
+          <path d="M165 255 C220 230, 265 205, 330 160" fill="none" stroke="#c9ff3d" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow)"></path>
+          <path d="M242 210 C198 185, 165 150, 130 118" fill="none" stroke="#ffb12f" stroke-width="5" stroke-dasharray="10 9" marker-end="url(#orangeArrow)"></path>
+          <path d="M242 210 C214 238, 185 264, 150 292" fill="none" stroke="#c9ff3d" stroke-width="4" stroke-dasharray="7 8" marker-end="url(#arrow)"></path>
+          ${player(130, 118, "#c9ff3d", "11")}
+          ${player(150, 292, "#c9ff3d", "7")}
+          ${player(242, 210, "#c9ff3d", "10")}
+          ${player(335, 150, "#9f1f38", "2")}
+          ${player(345, 245, "#9f1f38", "5")}
+          ${ball(255, 202)}
+        `)
+      },
+      {
+        label: "Пенальти",
+        caption: "Вратарь стоит на линии, игрок SANJIK делает паузу. Стрелка показывает удар низом в угол.",
+        svg: fieldSvg(`
+          <rect x="186" y="18" width="148" height="12" fill="#f8fbff"></rect>
+          <path d="M260 272 C245 215, 222 155, 205 64" fill="none" stroke="#ffb12f" stroke-width="6" marker-end="url(#orangeArrow)"></path>
+          ${player(260, 292, "#c9ff3d", "11")}
+          ${player(260, 66, "#70e5d6", "1")}
+          ${ball(260, 252)}
+          <text x="260" y="345" text-anchor="middle" fill="#f8fbff" font-size="18" font-weight="900">Пауза и удар в угол</text>
+        `)
+      },
+      {
+        label: "Последний пас",
+        caption: "Плеймейкер видит рывок за спину. Пунктирная линия - пас, который отрезает защитников.",
+        svg: fieldSvg(`
+          <path d="M215 236 C255 190, 302 142, 360 112" fill="none" stroke="#ffb12f" stroke-width="5" stroke-dasharray="10 9" marker-end="url(#orangeArrow)"></path>
+          <path d="M354 126 C385 105, 415 86, 455 66" fill="none" stroke="#c9ff3d" stroke-width="5" marker-end="url(#arrow)"></path>
+          ${player(215, 236, "#c9ff3d", "10")}
+          ${player(354, 126, "#c9ff3d", "9")}
+          ${player(300, 160, "#9f1f38", "4")}
+          ${player(330, 215, "#9f1f38", "6")}
+          ${player(410, 95, "#9f1f38", "3")}
+          ${ball(226, 226)}
+        `)
+      },
+      {
+        label: "Удар с фланга",
+        caption: "Игрок справа закручивает мяч в дальний угол, потому что ближний закрыт вратарем.",
+        svg: fieldSvg(`
+          <path d="M420 286 C360 220, 285 145, 205 66" fill="none" stroke="#ffb12f" stroke-width="6" marker-end="url(#orangeArrow)"></path>
+          <path d="M410 286 C390 255, 374 224, 350 190" fill="none" stroke="#c9ff3d" stroke-width="4" stroke-dasharray="7 8" marker-end="url(#arrow)"></path>
+          ${player(420, 286, "#c9ff3d", "11")}
+          ${player(262, 66, "#70e5d6", "1")}
+          ${player(360, 245, "#9f1f38", "2")}
+          ${player(330, 178, "#9f1f38", "5")}
+          ${ball(405, 270)}
+          <text x="104" y="64" fill="#f8fbff" font-size="16" font-weight="900">Дальний угол</text>
+        `)
+      },
+      {
+        label: "Сейв вратаря",
+        caption: "Нападающий обманывает взглядом, но корпус показывает правый угол. Лучшее решение - ждать и падать вправо.",
+        svg: fieldSvg(`
+          <path d="M260 286 C272 230, 282 165, 306 92" fill="none" stroke="#ffb12f" stroke-width="6" marker-end="url(#orangeArrow)"></path>
+          <path d="M260 92 C280 88, 302 82, 326 68" fill="none" stroke="#70e5d6" stroke-width="6" marker-end="url(#arrow)"></path>
+          ${player(260, 286, "#9f1f38", "9")}
+          ${player(260, 92, "#70e5d6", "1")}
+          ${player(205, 300, "#c9ff3d", "4")}
+          ${player(318, 304, "#c9ff3d", "5")}
+          ${ball(260, 262)}
+          <text x="260" y="344" text-anchor="middle" fill="#f8fbff" font-size="18" font-weight="900">Читать корпус, не взгляд</text>
+        `)
+      }
+    ];
+
+    const state = {
+      index: 0,
+      score: 0,
+      locked: false
+    };
+
+    const playerBios = {
+      golovin: {
+        name: "GOLOVIN 25",
+        role: "Полузащитник FC SANJIK",
+        number: "25",
+        position: "Центр поля",
+        skill: "Темп и пас",
+        image: "assets/player-golovin-real.jpg",
+        bio: "Мозг полузащиты FC SANJIK. GOLOVIN держит ритм команды, ускоряет атаки первым пасом и помогает SANJIK спокойно выходить из-под давления в матчах Ла Лиги и Лиги чемпионов."
+      },
+      mastantuono: {
+        name: "MASTANTUONO 20",
+        role: "Атакующий игрок FC SANJIK",
+        number: "20",
+        position: "Под нападающим",
+        skill: "Дриблинг",
+        image: "assets/player-mastantuono-real.jpg",
+        bio: "Игрок, который любит получать мяч между линиями. MASTANTUONO добавляет команде фантазию: может обыграть один в один, найти неожиданный пас и создать момент из маленького пространства."
+      },
+      yildiz: {
+        name: "YILDIZ 26",
+        role: "Вингер FC SANJIK",
+        number: "26",
+        position: "Левый фланг",
+        skill: "Рывок",
+        image: "assets/player-yildiz-real.jpg",
+        bio: "Фланговая скорость FC SANJIK. YILDIZ растягивает оборону, смещается под удар и заставляет защитников выбирать между подстраховкой и риском оставить зону свободной."
+      },
+      alvarez: {
+        name: "J. ALVAREZ 15",
+        role: "Нападающий FC SANJIK",
+        number: "15",
+        position: "Атака",
+        skill: "Прессинг",
+        image: "assets/player-alvarez-real.jpg",
+        bio: "Форвард, который начинает оборону команды уже у чужой штрафной. J. ALVAREZ давит защитников, открывается под быстрый пас и превращает потерянные мячи соперника в опасные атаки."
+      },
+      joao: {
+        name: "JOAO PEDRO 9",
+        role: "Форвард FC SANJIK",
+        number: "9",
+        position: "Центр атаки",
+        skill: "Завершение",
+        image: "assets/player-joao-pedro-real.jpg",
+        bio: "Главная угроза в штрафной. JOAO PEDRO играет на последнем движении, цепляется за передачи и умеет завершать моменты тогда, когда команде особенно нужен гол."
+      }
+    };
+
+    const roundText = document.querySelector("#roundText");
+    const scoreText = document.querySelector("#scoreText");
+    const meterFill = document.querySelector("#meterFill");
+    const momentTitle = document.querySelector("#momentTitle");
+    const momentText = document.querySelector("#momentText");
+    const choices = document.querySelector("#choices");
+    const result = document.querySelector("#result");
+    const nextBtn = document.querySelector("#nextBtn");
+    const restartBtn = document.querySelector("#restartBtn");
+    const diagramLabel = document.querySelector("#diagramLabel");
+    const diagramBoard = document.querySelector("#diagramBoard");
+    const diagramCaption = document.querySelector("#diagramCaption");
+    const playerModal = document.querySelector("#playerModal");
+    const playerModalImage = document.querySelector("#playerModalImage");
+    const playerModalName = document.querySelector("#playerModalName");
+    const playerModalRole = document.querySelector("#playerModalRole");
+    const playerModalNumber = document.querySelector("#playerModalNumber");
+    const playerModalPosition = document.querySelector("#playerModalPosition");
+    const playerModalSkill = document.querySelector("#playerModalSkill");
+    const playerModalBio = document.querySelector("#playerModalBio");
+    const playerModalClose = document.querySelector("#playerModalClose");
+    const railLinks = Array.from(document.querySelectorAll(".rail-link[data-section]"));
+    let lastFocusedPlayer = null;
+
+    function setActiveRail(sectionId) {
+      railLinks.forEach((link) => {
+        link.classList.toggle("is-active", link.dataset.section === sectionId);
+      });
+    }
+
+    function updateActiveRail() {
+      const offset = window.innerHeight * 0.32;
+      let current = "top";
+
+      railLinks.forEach((link) => {
+        const target = document.querySelector(link.getAttribute("href"));
+        if (target && window.scrollY + offset >= target.offsetTop) {
+          current = target.id;
+        }
+      });
+
+      setActiveRail(current);
+    }
+
+    railLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        setActiveRail(link.dataset.section);
+      });
+    });
+
+    updateActiveRail();
+    window.addEventListener("scroll", updateActiveRail, { passive: true });
+
+    function openPlayerModal(playerId) {
+      const player = playerBios[playerId];
+      if (!player) return;
+      lastFocusedPlayer = document.activeElement;
+      playerModalImage.src = player.image;
+      playerModalImage.alt = `${player.name} в домашней форме FC SANJIK`;
+      playerModalName.textContent = player.name;
+      playerModalRole.textContent = player.role;
+      playerModalNumber.textContent = player.number;
+      playerModalPosition.textContent = player.position;
+      playerModalSkill.textContent = player.skill;
+      playerModalBio.textContent = player.bio;
+      playerModal.hidden = false;
+      playerModalClose.focus();
+    }
+
+    function closePlayerModal() {
+      playerModal.hidden = true;
+      if (lastFocusedPlayer) {
+        lastFocusedPlayer.focus();
+      }
+    }
+
+    document.querySelectorAll(".player-card[data-player]").forEach((card) => {
+      card.addEventListener("click", () => openPlayerModal(card.dataset.player));
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openPlayerModal(card.dataset.player);
+        }
+      });
+    });
+
+    playerModalClose.addEventListener("click", closePlayerModal);
+    playerModal.addEventListener("click", (event) => {
+      if (event.target === playerModal) {
+        closePlayerModal();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !playerModal.hidden) {
+        closePlayerModal();
+      }
+    });
+
+    function renderDiagram(index) {
+      const diagram = diagrams[index];
+      diagramLabel.textContent = diagram.label;
+      diagramBoard.innerHTML = diagram.svg;
+      diagramCaption.textContent = diagram.caption;
+    }
+
+    function renderRound() {
+      const round = rounds[state.index];
+      state.locked = false;
+      roundText.textContent = `Раунд ${state.index + 1} из ${rounds.length}`;
+      scoreText.textContent = `${state.score} очков`;
+      meterFill.style.width = `${(state.index / rounds.length) * 100}%`;
+      momentTitle.textContent = round.title;
+      momentText.textContent = round.text;
+      result.textContent = "Выбери решение для этого эпизода.";
+      nextBtn.disabled = true;
+      nextBtn.textContent = state.index === rounds.length - 1 ? "Показать результат" : "Следующий эпизод";
+      choices.innerHTML = "";
+      renderDiagram(state.index);
+
+      round.options.forEach((option) => {
+        const button = document.createElement("button");
+        button.className = "choice";
+        button.type = "button";
+        button.textContent = option.label;
+        button.addEventListener("click", () => chooseOption(button, option));
+        choices.append(button);
+      });
+    }
+
+    function chooseOption(button, option) {
+      if (state.locked) return;
+      state.locked = true;
+      state.score += option.points;
+      scoreText.textContent = `${state.score} очков`;
+      button.classList.add("selected");
+      result.textContent = `${option.result} +${option.points} очк.`;
+      nextBtn.disabled = false;
+
+      document.querySelectorAll(".choice").forEach((choice) => {
+        choice.disabled = true;
+      });
+    }
+
+    function showFinal() {
+      meterFill.style.width = "100%";
+      roundText.textContent = "Матч завершен";
+      scoreText.textContent = `${state.score} из ${rounds.length * 2}`;
+      choices.innerHTML = "";
+      nextBtn.disabled = true;
+
+      let title = "Игрок момента";
+      let note = "Ты поймал несколько важных решений, но FC SANJIK любит еще больше смелости.";
+
+      if (state.score >= 9) {
+        title = "Мастер интуиции FC SANJIK";
+        note = "Почти каждое решение было в темп. Так чувствуют игру лидеры.";
+      } else if (state.score >= 6) {
+        title = "Тактик команды";
+        note = "Хороший матч: ты видел свободные зоны и выбирал сильные варианты.";
+      } else if (state.score <= 3) {
+        title = "Новичок академии";
+        note = "Матч был непростым, зато теперь понятнее, где SANJIK ускоряет игру.";
+      }
+
+      momentTitle.textContent = title;
+      momentText.textContent = `Твой результат: ${state.score} из ${rounds.length * 2}. ${note}`;
+      result.textContent = "Нажми «Начать заново», чтобы пройти матч еще раз.";
+      diagramLabel.textContent = "Финальная карта";
+      diagramBoard.innerHTML = fieldSvg(`
+        <path d="M90 300 C155 225, 220 170, 300 110" fill="none" stroke="#c9ff3d" stroke-width="6" marker-end="url(#arrow)"></path>
+        <path d="M300 110 C350 92, 400 72, 454 54" fill="none" stroke="#ffb12f" stroke-width="5" stroke-dasharray="10 9" marker-end="url(#orangeArrow)"></path>
+        ${player(90, 300, "#c9ff3d", "1")}
+        ${player(185, 220, "#c9ff3d", "8")}
+        ${player(300, 110, "#c9ff3d", "10")}
+        ${player(430, 70, "#c9ff3d", "11")}
+        ${ball(438, 64)}
+        <text x="260" y="345" text-anchor="middle" fill="#f8fbff" font-size="18" font-weight="900">Маршрут решений FC SANJIK</text>
+      `);
+      diagramCaption.textContent = "Итоговая схема показывает путь команды: от первого решения до финального момента.";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (state.index === rounds.length - 1) {
+        showFinal();
+        return;
+      }
+      state.index += 1;
+      renderRound();
+    });
+
+    restartBtn.addEventListener("click", () => {
+      state.index = 0;
+      state.score = 0;
+      renderRound();
+    });
+
+    renderRound();
+  </script>
+</body>
+</html>
